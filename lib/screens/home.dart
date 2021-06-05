@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:camera/camera.dart';
 
-const double cPreviewHeight = 150;
-const double cPreviewWidth = 100;
+const double cPreviewHeight = 100;
+const double cPreviewWidth = 150;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -107,7 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           if (cameras.isNotEmpty)
             Positioned(
-              left: dx ?? MediaQuery.of(context).size.width - cPreviewWidth,
+              left: dx ??
+                  MediaQuery.of(context).size.width -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom -
+                      cPreviewWidth,
               top: dy ?? MediaQuery.of(context).size.height - cPreviewHeight,
               child: Draggable<int>(
                 data: 1,
