@@ -18,10 +18,35 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   AuthCubit _authCubit = AuthCubit();
+  bool isSigningInWithPhone = false;
+
+  void _startSignInWithPhone() {
+    setState(() {
+      isSigningInWithPhone = true;
+    });
+  }
+
+  void _resetSignInOption() {
+    setState(() {
+      isSigningInWithPhone = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: isSigningInWithPhone
+          ? AppBar(
+              backgroundColor: absoluteWhite,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.chevron_left_sharp,
+                  color: absoluteBlack,
+                ),
+                onPressed: _resetSignInOption,
+              ))
+          : null,
       backgroundColor: absoluteWhite,
       body: SafeArea(
         child: Container(
@@ -43,10 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     bloc: _authCubit,
                     builder: (context, state) {
                       log(state.toJson().toString());
-                      return Column(
-                        children: [
-                          if (Platform.isIOS)
-                            Row(
+                      return isSigningInWithPhone
+                          ? Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -134,15 +157,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                               ],
-                            ),
-                          ElevatedButton(
-                            child: Text(
-                              'Sign in with Google',
-                            ),
-                            onPressed: _authCubit.signInWithGoogle,
-                          )
-                        ],
-                      );
+                            )
+                          : Column(
+                              children: [
+                                ElevatedButton(
+                                  child: Text(
+                                    'Sign in with Google',
+                                  ),
+                                  onPressed: _authCubit.signInWithGoogle,
+                                ),
+                                if (Platform.isAndroid)
+                                  OutlinedButton(
+                                    child: Text(
+                                      'Sign in with Phone number',
+                                    ),
+                                    onPressed: _startSignInWithPhone,
+                                  )
+                              ],
+                            );
                     },
                   ),
                 ),

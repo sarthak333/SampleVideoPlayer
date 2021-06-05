@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Yellow Class',
       navigatorKey: navigatorKey,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blueGrey,
       ),
       home: SplashScreen(),
     );
