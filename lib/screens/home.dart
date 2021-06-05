@@ -58,14 +58,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleDragEnd(details) {
+    double safeWidthMax = MediaQuery.of(context).size.width -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
+    double safeWidthMin = MediaQuery.of(context).padding.top;
+
     setState(() {
-      dx = details.offset.dx > 0 &&
-              details.offset.dx <
-                  (MediaQuery.of(context).size.width - cPreviewWidth)
+      dx = details.offset.dx > safeWidthMin &&
+              details.offset.dx < (safeWidthMax - cPreviewWidth)
           ? details.offset.dx
           : details.offset.dx < 0
-              ? 0
-              : MediaQuery.of(context).size.width - cPreviewWidth;
+              ? safeWidthMin
+              : safeWidthMax - cPreviewWidth;
       dy = details.offset.dy > 0 &&
               details.offset.dy <
                   (MediaQuery.of(context).size.height - cPreviewHeight)
@@ -86,47 +90,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            VideoPlayer(_videoController),
-            DragTarget(
-              builder: (context, List<Object?> candidateData, rejectedData) {
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                );
-              },
-              onWillAccept: (data) {
-                return true;
-              },
-              onAccept: (data) {},
-            ),
-            if (cameras.isNotEmpty)
-              Positioned(
-                left: dx ?? MediaQuery.of(context).size.width - cPreviewWidth,
-                top: dy ?? MediaQuery.of(context).size.height - cPreviewHeight,
-                child: Draggable<int>(
-                  data: 1,
-                  child: RotatedBox(
-                    quarterTurns: 4,
-                    child: Container(
-                      height: cPreviewHeight,
-                      width: cPreviewWidth,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                            offset: Offset(4, 4),
-                          ),
-                        ],
-                      ),
-                      child: CameraPreview(_cameraController),
-                    ),
-                  ),
-                  feedback: Container(
+      body: Stack(
+        children: [
+          VideoPlayer(_videoController),
+          DragTarget(
+            builder: (context, List<Object?> candidateData, rejectedData) {
+              return Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+              );
+            },
+            onWillAccept: (data) {
+              return true;
+            },
+            onAccept: (data) {},
+          ),
+          if (cameras.isNotEmpty)
+            Positioned(
+              left: dx ?? MediaQuery.of(context).size.width - cPreviewWidth,
+              top: dy ?? MediaQuery.of(context).size.height - cPreviewHeight,
+              child: Draggable<int>(
+                data: 1,
+                child: RotatedBox(
+                  quarterTurns: 4,
+                  child: Container(
                     height: cPreviewHeight,
                     width: cPreviewWidth,
                     decoration: BoxDecoration(
@@ -141,27 +128,46 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: CameraPreview(_cameraController),
                   ),
-                  childWhenDragging: Container(),
-                  onDragEnd: _handleDragEnd,
                 ),
+                feedback: Container(
+                  height: cPreviewHeight,
+                  width: cPreviewWidth,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                        offset: Offset(4, 4),
+                      ),
+                    ],
+                  ),
+                  child: CameraPreview(_cameraController),
+                ),
+                childWhenDragging: Container(),
+                onDragEnd: _handleDragEnd,
               ),
-            Positioned(
-              bottom: 10,
-              left: MediaQuery.of(context).size.width / 2 - 100,
-              child: Container(
-                width: 200,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Slider(
-                  value: volume,
-                  onChanged: _handleVolumeChange,
-                ),
+            ),
+          Positioned(
+            bottom: 10,
+            left: (MediaQuery.of(context).size.width -
+                        MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom) /
+                    2 -
+                100,
+            child: Container(
+              width: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
               ),
-            )
-          ],
-        ),
+              child: Slider(
+                value: volume,
+                onChanged: _handleVolumeChange,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
