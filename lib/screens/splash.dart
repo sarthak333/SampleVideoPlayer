@@ -24,14 +24,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> handleAppStart() async {
     handleBoot().then((value) {
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              _authCubit.isUserLoggedIn() && Platform.isAndroid
-                  ? LoginScreen()
-                  : HomeScreen(),
+              _authCubit.isUserLoggedIn() ? LoginScreen() : HomeScreen(),
         ),
+        (route) => false,
       );
     });
   }

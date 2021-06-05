@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -41,93 +43,104 @@ class _LoginScreenState extends State<LoginScreen> {
                     bloc: _authCubit,
                     builder: (context, state) {
                       log(state.toJson().toString());
-                      return Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      return Column(
                         children: [
-                          state.hasSentOtp
-                              ? ReactiveForm(
-                                  key: Key('otpInput'),
-                                  formGroup: _authCubit.otpForm,
-                                  child: Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: 150,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: ReactiveTextField(
-                                            formControlName: 'otp',
-                                            decoration:
-                                                inputDecoration.copyWith(
-                                              hintText: 'OTP',
-                                              hintStyle: hintText,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      ReactiveFormConsumer(
-                                        builder: (context, form, child) {
-                                          return ElevatedButton(
-                                            child: Container(
-                                              height: 46,
-                                              child: Center(
-                                                child: Text(
-                                                  'Verify',
+                          if (Platform.isIOS)
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                state.hasSentOtp
+                                    ? ReactiveForm(
+                                        key: Key('otpInput'),
+                                        formGroup: _authCubit.otpForm,
+                                        child: Row(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              width: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: ReactiveTextField(
+                                                  formControlName: 'otp',
+                                                  decoration:
+                                                      inputDecoration.copyWith(
+                                                    hintText: 'OTP',
+                                                    hintStyle: hintText,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                            onPressed: form.valid
-                                                ? _authCubit.verifyOtp
-                                                : null,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : ReactiveForm(
-                                  key: Key('phoneInput'),
-                                  formGroup: _authCubit.phoneNumberForm,
-                                  child: Row(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        width: 150,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: ReactiveTextField(
-                                            formControlName: 'phone',
-                                            decoration:
-                                                inputDecoration.copyWith(
-                                              hintText: 'Phone number',
-                                              hintStyle: hintText,
+                                            SizedBox(width: 8),
+                                            ReactiveFormConsumer(
+                                              builder: (context, form, child) {
+                                                return ElevatedButton(
+                                                  child: Container(
+                                                    height: 46,
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Verify',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: form.valid
+                                                      ? _authCubit.verifyOtp
+                                                      : null,
+                                                );
+                                              },
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      ReactiveFormConsumer(
-                                        builder: (context, form, child) {
-                                          return ElevatedButton(
-                                            child: Container(
-                                              height: 46,
-                                              child: Center(
-                                                child: Text(
-                                                  'Get OTP',
+                                      )
+                                    : ReactiveForm(
+                                        key: Key('phoneInput'),
+                                        formGroup: _authCubit.phoneNumberForm,
+                                        child: Row(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              width: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: ReactiveTextField(
+                                                  formControlName: 'phone',
+                                                  decoration:
+                                                      inputDecoration.copyWith(
+                                                    hintText: 'Phone number',
+                                                    hintStyle: hintText,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                            onPressed: form.valid
-                                                ? _authCubit.sendOtp
-                                                : null,
-                                          );
-                                        },
+                                            SizedBox(width: 8),
+                                            ReactiveFormConsumer(
+                                              builder: (context, form, child) {
+                                                return ElevatedButton(
+                                                  child: Container(
+                                                    height: 46,
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Get OTP',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  onPressed: form.valid
+                                                      ? _authCubit.sendOtp
+                                                      : null,
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                              ],
+                            ),
+                          ElevatedButton(
+                            child: Text(
+                              'Sign in with Google',
+                            ),
+                            onPressed: _authCubit.signInWithGoogle,
+                          )
                         ],
                       );
                     },
