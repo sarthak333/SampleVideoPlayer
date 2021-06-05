@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -133,32 +134,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: CameraPreview(_cameraController),
                   ),
                 ),
-                feedback: Container(
-                  height: cPreviewHeight,
-                  width: cPreviewWidth,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 12,
-                        spreadRadius: 2,
-                        offset: Offset(4, 4),
-                      ),
-                    ],
+                feedback: Opacity(
+                  opacity: 0.3,
+                  child: Container(
+                    height: cPreviewHeight,
+                    width: cPreviewWidth,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                          offset: Offset(4, 4),
+                        ),
+                      ],
+                    ),
+                    child: CameraPreview(_cameraController),
                   ),
-                  child: CameraPreview(_cameraController),
                 ),
                 childWhenDragging: Container(),
                 onDragEnd: _handleDragEnd,
               ),
             ),
           Positioned(
-            bottom: 10,
-            left: (MediaQuery.of(context).size.width -
-                        MediaQuery.of(context).padding.top -
-                        MediaQuery.of(context).padding.bottom) /
-                    2 -
-                100,
+            bottom: Platform.isIOS ? 24 : 16,
+            left: (MediaQuery.of(context).size.width / 2) - 100,
             child: Container(
               width: 200,
               decoration: BoxDecoration(
