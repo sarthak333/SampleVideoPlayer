@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late VideoPlayerController _videoController;
   late CameraController _cameraController;
   late List<CameraDescription> cameras = [];
-  double volume = 0.1;
+  double volume = 1;
 
   double? dx;
   double? dy;
