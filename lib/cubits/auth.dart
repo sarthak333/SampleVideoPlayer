@@ -7,6 +7,7 @@ import 'package:yellow_class/main.dart';
 import 'package:yellow_class/models/auth_state.dart';
 import 'package:yellow_class/screens/home.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:yellow_class/screens/splash.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthState());
@@ -102,6 +103,27 @@ class AuthCubit extends Cubit<AuthState> {
     FirebaseAuth.instance.signInWithCredential(credential).then((value) {
       navigatorKey.currentState?.pushAndRemoveUntil(
           MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+          (route) => false);
+    }).catchError((error) {
+      Fluttertoast.showToast(
+        msg: 'Something went wrong! Please try again later.',
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    });
+  }
+
+  Future<void> handleLogout() async {
+    FirebaseAuth.instance.signOut().then((value) async {
+      final GoogleSignIn _googleSignIn = GoogleSignIn();
+      if (await _googleSignIn.isSignedIn()) {
+        _googleSignIn.signOut();
+      }
+      navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => SplashScreen()),
           (route) => false);
     }).catchError((error) {
       Fluttertoast.showToast(

@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:camera/camera.dart';
+import 'package:yellow_class/cubits/auth.dart';
 
 const double cPreviewHeight = 100;
 const double cPreviewWidth = 150;
@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AuthCubit _authCubit = AuthCubit();
   late VideoPlayerController _videoController;
   late CameraController _cameraController;
   late List<CameraDescription> cameras = [];
@@ -91,6 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: Tooltip(
+        message: 'Logout',
+        child: IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: _authCubit.handleLogout,
+        ),
+      ),
       body: Stack(
         children: [
           VideoPlayer(_videoController),
@@ -159,18 +168,21 @@ class _HomeScreenState extends State<HomeScreen> {
           Positioned(
             bottom: Platform.isIOS ? 24 : 16,
             left: (MediaQuery.of(context).size.width / 2) - 100,
-            child: Container(
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Slider(
-                value: volume,
-                onChanged: _handleVolumeChange,
+            child: Tooltip(
+              message: 'Volume',
+              child: Container(
+                width: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Slider(
+                  value: volume,
+                  onChanged: _handleVolumeChange,
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
