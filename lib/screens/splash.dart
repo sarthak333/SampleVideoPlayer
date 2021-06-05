@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:yellow_class/cubits/auth.dart';
 import 'package:yellow_class/screens/home.dart';
 import 'package:yellow_class/screens/login.dart';
@@ -28,7 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              _authCubit.isUserLoggedIn() ? LoginScreen() : HomeScreen(),
+              _authCubit.isUserLoggedIn() && Platform.isAndroid
+                  ? LoginScreen()
+                  : HomeScreen(),
         ),
       );
     });

@@ -44,6 +44,7 @@ class AuthCubit extends Cubit<AuthState> {
         await auth.signInWithCredential(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
+        print(e);
         Fluttertoast.showToast(
           msg: 'Something went wrong! Please try again later.',
           gravity: ToastGravity.TOP,
