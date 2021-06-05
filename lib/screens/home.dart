@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:camera/camera.dart';
 import 'package:yellow_class/cubits/auth.dart';
+import 'package:yellow_class/util/styles.dart';
 
 const double cPreviewHeight = 100;
 const double cPreviewWidth = 150;
@@ -130,16 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     height: cPreviewHeight,
                     width: cPreviewWidth,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                          offset: Offset(4, 4),
-                        ),
-                      ],
-                    ),
+                    decoration: cameraPreview,
                     child: CameraPreview(_cameraController),
                   ),
                 ),
@@ -148,16 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     height: cPreviewHeight,
                     width: cPreviewWidth,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                          offset: Offset(4, 4),
-                        ),
-                      ],
-                    ),
+                    decoration: cameraPreview,
                     child: CameraPreview(_cameraController),
                   ),
                 ),
@@ -172,10 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
               message: 'Volume',
               child: Container(
                 width: 200,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: volumeContainer,
                 child: Slider(
                   value: volume,
                   onChanged: _handleVolumeChange,

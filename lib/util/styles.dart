@@ -25,3 +25,19 @@ final InputDecoration inputDecoration = InputDecoration(
   disabledBorder: InputBorder.none,
   focusedErrorBorder: InputBorder.none,
 );
+
+final BoxDecoration cameraPreview = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 12,
+      spreadRadius: 2,
+      offset: Offset(4, 4),
+    ),
+  ],
+);
+
+final BoxDecoration volumeContainer = BoxDecoration(
+  color: Colors.grey.withOpacity(0.2),
+  borderRadius: BorderRadius.circular(16),
+);

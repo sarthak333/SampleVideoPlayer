@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -67,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: BlocBuilder<AuthCubit, AuthState>(
                     bloc: _authCubit,
                     builder: (context, state) {
-                      log(state.toJson().toString());
                       return isSigningInWithPhone
                           ? Row(
                               mainAxisSize: MainAxisSize.max,
