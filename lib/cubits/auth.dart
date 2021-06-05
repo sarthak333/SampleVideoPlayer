@@ -26,7 +26,6 @@ class AuthCubit extends Cubit<AuthState> {
   final otpForm = FormGroup({
     'otp': FormControl<String>(validators: [
       Validators.required,
-      Validators.number,
       Validators.maxLength(6),
       Validators.minLength(6),
     ]),
@@ -38,6 +37,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> sendOtp() async {
+    emit(state.copyWith(isPhoneSignInLoading: true));
     String phoneNumber = '+91${phoneNumberForm.value['phone'].toString()}';
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.verifyPhoneNumber(
@@ -58,25 +58,35 @@ class AuthCubit extends Cubit<AuthState> {
       },
       codeSent: (String verificationId, int? resendToken) async {
         _verificationId = verificationId;
-        emit(AuthState(hasSentOtp: true));
+        emit(state.copyWith(
+          hasSentOtp: true,
+          isPhoneSignInLoading: false,
+        ));
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         _verificationId = verificationId;
-        emit(AuthState(hasSentOtp: true));
+        emit(state.copyWith(
+          hasSentOtp: true,
+          isPhoneSignInLoading: false,
+        ));
       },
     );
   }
 
   Future<void> verifyOtp() async {
+    emit(state.copyWith(isPhoneSignInLoading: true));
     String? smsCode = otpForm.value['otp'].toString();
     FirebaseAuth auth = FirebaseAuth.instance;
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: smsCode);
     auth.signInWithCredential(credential).then((value) {
       navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
-          (route) => false);
+        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+        (route) => false,
+      );
+      emit(state.copyWith(isPhoneSignInLoading: false));
     }).catchError((error) {
+      emit(state.copyWith(isPhoneSignInLoading: false));
       Fluttertoast.showToast(
         msg: 'Invalid OTP',
         gravity: ToastGravity.TOP,
@@ -89,31 +99,39 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser =
-        await GoogleSignIn().signIn() as GoogleSignInAccount;
+    emit(state.copyWith(isGoogleSignInLoading: true));
+    try {
+      final GoogleSignInAccount googleUser =
+          await GoogleSignIn().signIn() as GoogleSignInAccount;
 
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    FirebaseAuth.instance.signInWithCredential(credential).then((value) {
-      navigatorKey.currentState?.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
-          (route) => false);
-    }).catchError((error) {
-      Fluttertoast.showToast(
-        msg: 'Something went wrong! Please try again later.',
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
-    });
+
+      FirebaseAuth.instance.signInWithCredential(credential).then((value) {
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+          (route) => false,
+        );
+        emit(state.copyWith(isGoogleSignInLoading: false));
+      }).catchError((error) {
+        emit(state.copyWith(isGoogleSignInLoading: false));
+        Fluttertoast.showToast(
+          msg: 'Something went wrong! Please try again later.',
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      });
+    } catch (error) {
+      emit(state.copyWith(isGoogleSignInLoading: false));
+    }
   }
 
   Future<void> handleLogout() async {

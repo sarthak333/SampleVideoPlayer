@@ -8,7 +8,14 @@ part 'auth_state.g.dart';
 class AuthState {
   bool hasSentOtp;
 
-  AuthState({this.hasSentOtp = false});
+  bool isGoogleSignInLoading;
+  bool isPhoneSignInLoading;
+
+  AuthState({
+    this.hasSentOtp = false,
+    this.isGoogleSignInLoading = false,
+    this.isPhoneSignInLoading = false,
+  });
 
   factory AuthState.fromJson(Map<String, dynamic> json) =>
       _$AuthStateFromJson(json);
